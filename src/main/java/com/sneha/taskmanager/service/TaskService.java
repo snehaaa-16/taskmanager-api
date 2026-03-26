@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.sneha.taskmanager.entity.Status;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -83,9 +84,19 @@ public class TaskService {
     }
 
     public void deleteTask(Long taskId) {
-        if (!taskRepository.existsById(taskId)) {
-            throw new ResourceNotFoundException("Task not found");
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+
+        String currentUser = getCurrentUserEmail();
+
+        if (!task.getUser().getEmail().equals(currentUser)) {
+            throw new RuntimeException("Access denied");
         }
-        taskRepository.deleteById(taskId);
+
+        taskRepository.delete(task);
+    }
+
+    private String getCurrentUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

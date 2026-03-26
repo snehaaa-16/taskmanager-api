@@ -4,6 +4,7 @@ import com.sneha.taskmanager.dto.TaskRequestDTO;
 import com.sneha.taskmanager.dto.TaskResponseDTO;
 import com.sneha.taskmanager.entity.Task;
 import com.sneha.taskmanager.entity.User;
+import com.sneha.taskmanager.exception.ResourceNotFoundException;
 import com.sneha.taskmanager.repository.TaskRepository;
 import com.sneha.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class TaskService {
 
     public void deleteTask(Long taskId) {
         if (!taskRepository.existsById(taskId)) {
-            throw new RuntimeException("Task not found");
+            throw new ResourceNotFoundException("Task not found");
         }
         taskRepository.deleteById(taskId);
     }

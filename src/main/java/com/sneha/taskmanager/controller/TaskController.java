@@ -37,4 +37,18 @@ public class TaskController {
 
         return ResponseEntity.ok(taskService.getTasksByStatus(status, pageable));
     }
+
+    @PutMapping("/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateTask(
+            @PathVariable Long taskId,
+            @RequestBody TaskRequestDTO dto) {
+
+        return ResponseEntity.ok(taskService.updateTask(taskId, dto));
+    }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable Long taskId) {
+        taskService.deleteTask(taskId);
+        return ResponseEntity.ok("Task deleted successfully");
+    }
 }

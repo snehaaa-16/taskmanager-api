@@ -4,6 +4,9 @@ import com.sneha.taskmanager.dto.TaskRequestDTO;
 import com.sneha.taskmanager.dto.TaskResponseDTO;
 import com.sneha.taskmanager.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.sneha.taskmanager.entity.Status;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,5 +23,18 @@ public class TaskController {
             @PathVariable Long userId) {
 
         return ResponseEntity.ok(taskService.createTask(dto, userId));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TaskResponseDTO>> getAllTasks(Pageable pageable) {
+        return ResponseEntity.ok(taskService.getAllTasks(pageable));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Page<TaskResponseDTO>> getTasksByStatus(
+            @RequestParam Status status,
+            Pageable pageable) {
+
+        return ResponseEntity.ok(taskService.getTasksByStatus(status, pageable));
     }
 }

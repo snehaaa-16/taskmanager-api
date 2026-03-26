@@ -7,6 +7,9 @@ import com.sneha.taskmanager.entity.User;
 import com.sneha.taskmanager.repository.TaskRepository;
 import com.sneha.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.sneha.taskmanager.entity.Status;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,5 +39,25 @@ public class TaskService {
                 saved.getDescription(),
                 saved.getStatus()
         );
+    }
+
+    public Page<TaskResponseDTO> getAllTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable)
+                .map(task -> new TaskResponseDTO(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getStatus()
+                ));
+    }
+
+    public Page<TaskResponseDTO> getTasksByStatus(Status status, Pageable pageable) {
+        return taskRepository.findByStatus(status, pageable)
+                .map(task -> new TaskResponseDTO(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getStatus()
+                ));
     }
 }

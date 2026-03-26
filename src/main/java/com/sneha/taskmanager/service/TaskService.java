@@ -8,6 +8,8 @@ import com.sneha.taskmanager.exception.ResourceNotFoundException;
 import com.sneha.taskmanager.repository.TaskRepository;
 import com.sneha.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.sneha.taskmanager.entity.Status;
@@ -21,7 +23,11 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
+
     public TaskResponseDTO createTask(TaskRequestDTO dto, Long userId) {
+
+        logger.info("Creating task for user: {}", userId);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -65,6 +71,8 @@ public class TaskService {
 
     public TaskResponseDTO updateTask(Long taskId, TaskRequestDTO dto) {
 
+        logger.info("Updating task: {}", taskId);
+
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
@@ -84,10 +92,14 @@ public class TaskService {
     }
 
     public void deleteTask(Long taskId) {
+        logger.info("Deleting task: {}", taskId);
+
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
 
         String currentUser = getCurrentUserEmail();
+
+        logger.error("Unauthorized delete attempt by user: {}", currentUser);
 
         if (!task.getUser().getEmail().equals(currentUser)) {
             throw new RuntimeException("Access denied");

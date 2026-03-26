@@ -3,6 +3,7 @@ package com.sneha.taskmanager.controller;
 import com.sneha.taskmanager.dto.TaskRequestDTO;
 import com.sneha.taskmanager.dto.TaskResponseDTO;
 import com.sneha.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ public class TaskController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<TaskResponseDTO> createTask(
-            @RequestBody TaskRequestDTO dto,
+            @Valid @RequestBody TaskRequestDTO dto,
             @PathVariable Long userId) {
 
         return ResponseEntity.ok(taskService.createTask(dto, userId));
@@ -41,7 +42,7 @@ public class TaskController {
     @PutMapping("/{taskId}")
     public ResponseEntity<TaskResponseDTO> updateTask(
             @PathVariable Long taskId,
-            @RequestBody TaskRequestDTO dto) {
+            @Valid @RequestBody TaskRequestDTO dto) {
 
         return ResponseEntity.ok(taskService.updateTask(taskId, dto));
     }

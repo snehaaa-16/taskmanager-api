@@ -10,6 +10,8 @@ import com.sneha.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.sneha.taskmanager.entity.Status;
@@ -25,6 +27,7 @@ public class TaskService {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
+    @CacheEvict(value = {"tasks", "tasksByStatus"}, allEntries = true)
     public TaskResponseDTO createTask(TaskRequestDTO dto, Long userId) {
 
         logger.info("Creating task for user: {}", userId);
@@ -49,7 +52,11 @@ public class TaskService {
         );
     }
 
+    @Cacheable("tasks")
     public Page<TaskResponseDTO> getAllTasks(Pageable pageable) {
+
+        logger.info("Fetching tasks from DB");
+
         return taskRepository.findAll(pageable)
                 .map(task -> new TaskResponseDTO(
                         task.getId(),
@@ -59,7 +66,11 @@ public class TaskService {
                 ));
     }
 
+    @Cacheable("tasksByStatus")
     public Page<TaskResponseDTO> getTasksByStatus(Status status, Pageable pageable) {
+
+        logger.info("Fetching tasks by status from DB");
+
         return taskRepository.findByStatus(status, pageable)
                 .map(task -> new TaskResponseDTO(
                         task.getId(),
@@ -69,6 +80,7 @@ public class TaskService {
                 ));
     }
 
+    @CacheEvict(value = {"tasks", "tasksByStatus"}, allEntries = true)
     public TaskResponseDTO updateTask(Long taskId, TaskRequestDTO dto) {
 
         logger.info("Updating task: {}", taskId);
@@ -91,7 +103,9 @@ public class TaskService {
         );
     }
 
+    @CacheEvict(value = {"tasks", "tasksByStatus"}, allEntries = true)
     public void deleteTask(Long taskId) {
+
         logger.info("Deleting task: {}", taskId);
 
         Task task = taskRepository.findById(taskId)
@@ -99,9 +113,8 @@ public class TaskService {
 
         String currentUser = getCurrentUserEmail();
 
-        logger.error("Unauthorized delete attempt by user: {}", currentUser);
-
         if (!task.getUser().getEmail().equals(currentUser)) {
+            logger.error("Unauthorized delete attempt by user: {}", currentUser);
             throw new RuntimeException("Access denied");
         }
 

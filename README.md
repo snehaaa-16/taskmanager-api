@@ -91,6 +91,69 @@ src/main/java
 └── util
 ```
 
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint       | Description   |
+| ------ | -------------- | ------------- |
+| POST   | /auth/register | Register User |
+| POST   | /auth/login    | Login User    |
+
+### Tasks
+
+| Method | Endpoint    | Description    |
+| ------ | ----------- | -------------- |
+| POST   | /tasks      | Create Task    |
+| GET    | /tasks      | Get All Tasks  |
+| GET    | /tasks/{id} | Get Task By ID |
+| PUT    | /tasks/{id} | Update Task    |
+| DELETE | /tasks/{id} | Delete Task    |
+
+## Sample Task Request
+
+```json
+{
+  "title": "Learn Spring Boot",
+  "description": "Build REST APIs",
+  "completed": false
+}
+```
+
+## Security Flow
+
+1. User registers an account.
+2. User logs in using credentials.
+3. JWT token is generated.
+4. Token is sent in Authorization header.
+5. Protected APIs are accessed using the token.
+
+Example:
+
+```http
+Authorization: Bearer <jwt-token>
+```
+
+## Caching
+
+Redis caching is used to improve API response times for frequently accessed task data.
+
+Features:
+
+* Task Retrieval Caching
+* Automatic Cache Invalidation
+* Reduced Database Calls
+
+## Logging
+
+The application logs:
+
+* Incoming API Requests
+* API Responses
+* Exceptions
+* Validation Failures
+
 ## Author
 
 Sneha Jaiswal

@@ -17,7 +17,7 @@ A production-style Task Management REST API built using Spring Boot. The applica
 * JWT Authentication
 * User Registration
 * User Login
-* Role-Based Access Control
+* Role-Based Access Control (RBAC)
 * Password Encryption using BCrypt
 
 ### Validation & Error Handling
@@ -91,7 +91,6 @@ src/main/java
 └── util
 ```
 
-
 ## API Endpoints
 
 ### Authentication
@@ -126,13 +125,62 @@ src/main/java
 1. User registers an account.
 2. User logs in using credentials.
 3. JWT token is generated.
-4. Token is sent in Authorization header.
+4. Token is sent in the Authorization header.
 5. Protected APIs are accessed using the token.
 
 Example:
 
 ```http
 Authorization: Bearer <jwt-token>
+```
+
+## Configuration
+
+Configure database credentials using environment variables:
+
+```properties
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+```
+
+Example:
+
+```bash
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+Redis configuration:
+
+```properties
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+```
+
+## Running the Application
+
+### Clone Repository
+
+```bash
+git clone <repository-url>
+```
+
+### Build Project
+
+```bash
+mvn clean install
+```
+
+### Run Application
+
+```bash
+mvn spring-boot:run
+```
+
+The application starts on:
+
+```text
+http://localhost:8080
 ```
 
 ## Caching
